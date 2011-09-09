@@ -14,9 +14,13 @@
  */
 package com.gargoylesoftware.htmlunit.javascript.host.css;
 
+import com.gargoylesoftware.htmlunit.javascript.SimpleScriptable;
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
 import java.io.StringReader;
 import java.net.URL;
 
+import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.w3c.css.sac.InputSource;
@@ -39,6 +43,10 @@ import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLStyleElement;
 import com.steadystate.css.parser.CSSOMParser;
 import com.steadystate.css.parser.SACParserCSS21;
+
+import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Unit tests for {@link CSSStyleSheet}.
@@ -869,6 +877,36 @@ public class CSSStyleSheetTest extends WebDriverTestCase {
         final HtmlElement element = (HtmlElement) list.item(0);
         final ComputedCSSStyleDeclaration style = ((HTMLElement) element.getScriptObject()).jsxGet_currentStyle();
         assertEquals("CSSStyleDeclaration for ''", style.toString());
+    }
+
+    /**
+     * Test to verify whether CSS stylesheet source URI was correctly installed.
+     *
+     * Sometimes it's nice to know where the exception appeared.
+     */
+    @Test
+    public void testSourceUri(){
+        HTMLElement element = createMock(HTMLElement.class);
+        final InputSource source = EasyMock.createMock(InputSource.class);
+        final Window window = createMock(Window.class);
+        final String uri = "http://localhost";
+        expect(element.getWindow()).andReturn(window);
+        //we are expecting that the URL setter will be called
+        source.setURI(uri);
+        replay(element, source, window);
+        CSSStyleSheet style = new CSSStyleSheet(element, source, uri) {
+            @Override
+            protected Scriptable getPrototype(Class<? extends SimpleScriptable> javaScriptClass) {
+                return null;
+            }
+
+            @Override
+            org.w3c.dom.css.CSSStyleSheet parseCSS(InputSource source) {
+                return null;
+            }
+        };
+        verify(element, source, window);
+        assertNotNull(style);
     }
 
 }

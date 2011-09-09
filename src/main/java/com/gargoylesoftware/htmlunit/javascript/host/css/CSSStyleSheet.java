@@ -125,6 +125,9 @@ public class CSSStyleSheet extends SimpleScriptable {
     public CSSStyleSheet(final HTMLElement element, final InputSource source, final String uri) {
         setParentScope(element.getWindow());
         setPrototype(getPrototype(CSSStyleSheet.class));
+        if(source != null) {
+            source.setURI(uri);
+        }
         wrapped_ = parseCSS(source);
         uri_ = uri;
         ownerNode_ = element;
@@ -469,7 +472,7 @@ public class CSSStyleSheet extends SimpleScriptable {
      * @param source the source from which to retrieve the CSS to be parsed
      * @return the stylesheet parsed from the specified input source
      */
-    private org.w3c.dom.css.CSSStyleSheet parseCSS(final InputSource source) {
+     org.w3c.dom.css.CSSStyleSheet parseCSS(final InputSource source) {
         org.w3c.dom.css.CSSStyleSheet ss;
         try {
             final ErrorHandler errorHandler = getWindow().getWebWindow().getWebClient().getCssErrorHandler();
