@@ -472,7 +472,7 @@ public class CSSStyleSheet extends SimpleScriptable {
      * @param source the source from which to retrieve the CSS to be parsed
      * @return the stylesheet parsed from the specified input source
      */
-     org.w3c.dom.css.CSSStyleSheet parseCSS(final InputSource source) {
+    org.w3c.dom.css.CSSStyleSheet parseCSS(final InputSource source) {
         org.w3c.dom.css.CSSStyleSheet ss;
         try {
             final ErrorHandler errorHandler = getWindow().getWebWindow().getWebClient().getCssErrorHandler();
